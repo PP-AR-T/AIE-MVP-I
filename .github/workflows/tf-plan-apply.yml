@@ -1,87 +1,42 @@
-name: 'Terraform Plan/Apply'
-
-on:
+name: Run Azure CLI Login with OpenID Connect
+on: 
   workflow_dispatch: # Allows manual triggering of the workflow
 
 permissions:
-  id-token: write
-  contents: read
-  pull-requests: write
-
-jobs:
-  terraform:
-    name: 'Terraform Plan and Apply'
+  id-token: write # Require write permission to Fetch an OIDC token.
+      
+jobs: 
+  test:
     runs-on: ubuntu-latest
-    env:
-      ARM_SKIP_PROVIDER_REGISTRATION: true
-      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    steps:
+    - name: Azure CLI Login
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        ref: main  # This specifies to check out code from the 'main' branch
 
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v3
+      uses: hashicorp/setup-terraform@v2
       with:
-        terraform_wrapper: false
+          terraform_version: 1.5.7
+          terraform_wrapper: false
 
-    - name: Terraform Init
+    - name: Initialize Terraform
       run: terraform init
 
-    - name: Terraform Format
-      run: terraform fmt -check
+    - name: Validate Terraform configuration
+      run: terraform validate
 
-    - name: Terraform Plan
-      id: tf-plan
-      run: |
-        terraform plan -detailed-exitcode -no-color -out tfplan
+    - name: Plan Terraform deployment
+      run: terraform plan
 
-    - name: Publish Terraform Plan
-      uses: actions/upload-artifact@v4
-      with:
-        name: tfplan
-        path: tfplan
-
-    - name: Create String Output
-      id: tf-plan-string
-      run: |
-        TERRAFORM_PLAN=$(terraform show -no-color tfplan)
-        
-        delimiter="$(openssl rand -hex 8)"
-        echo "summary<<${delimiter}" >> $GITHUB_OUTPUT
-        echo "## Terraform Plan Output" >> $GITHUB_OUTPUT
-        echo "<details><summary>Click to expand</summary>" >> $GITHUB_OUTPUT
-        echo "" >> $GITHUB_OUTPUT
-        echo '```terraform' >> $GITHUB_OUTPUT
-        echo "$TERRAFORM_PLAN" >> $GITHUB_OUTPUT
-        echo '```' >> $GITHUB_OUTPUT
-        echo "</details>" >> $GITHUB_OUTPUT
-        echo "${delimiter}" >> $GITHUB_OUTPUT
-
-    - name: Publish Terraform Plan to Task Summary
-      env:
-        SUMMARY: ${{ steps.tf-plan-string.outputs.summary }}
-      run: |
-        echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
-
-    - name: Push Terraform Output to PR
-      if: github.ref != 'refs/heads/main'
-      uses: actions/github-script@v7
-      env:
-        SUMMARY: "${{ steps.tf-plan-string.outputs.summary }}"
-      with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const body = `${process.env.SUMMARY}`;
-            github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: body
-            })
-
-    - name: Terraform Apply
-      if: github.ref == 'refs/heads/main' && steps.tf-plan.outputs.exitcode == 2
-      run: terraform apply -auto-approve tfplan
+    - name: Apply Terraform changes
+      run: terraform apply -auto-approve
