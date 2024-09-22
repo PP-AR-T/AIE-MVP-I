@@ -1,9 +1,6 @@
 name: 'Terraform Plan/Apply'
 
 on:
-  #pull_request:
-  #  branches:
-  #  - dev
   workflow_dispatch: # Allows manual triggering of the workflow
 
 permissions:
@@ -24,6 +21,13 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Azure CLI Login
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
       with:
@@ -38,10 +42,6 @@ jobs:
     - name: Terraform Plan
       id: tf-plan
       run: |
-        export ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}
-        export ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        export ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
-        
         export exitcode=0
         terraform plan -detailed-exitcode -no-color -out tfplan || export exitcode=$?
         
@@ -109,6 +109,13 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Azure CLI Login
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
 
@@ -121,8 +128,4 @@ jobs:
         name: tfplan
 
     - name: Terraform Apply
-      run: |
-        export ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}
-        export ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        export ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
-        terraform apply -auto-approve tfplan
+      run: terraform apply -auto-approve tfplan
