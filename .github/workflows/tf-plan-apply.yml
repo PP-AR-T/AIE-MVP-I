@@ -7,7 +7,6 @@ on:
   pull_request:
     branches:
     - main
-  workflow_dispatch: # Allows manual triggering of the workflow
 
 #Special permissions required for OIDC authentication
 permissions:
