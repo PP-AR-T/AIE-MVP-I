@@ -22,7 +22,7 @@ env:
 
 jobs:
   whitelisting-ip:
-    name: 'Azure CLI Login'
+    name: 'Whitelist Github Runner IP'
     runs-on: ubuntu-latest
     environment: production
     steps:
