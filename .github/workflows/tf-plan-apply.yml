@@ -135,9 +135,9 @@ jobs:
             })
     
     - name: Remove GitHub Runner IP from Whitelist
-        if: always()
-        uses: azure/CLI@v1
-        with:
+      if: always()
+      uses: azure/CLI@v1
+      with:
           inlineScript: |
             set -eu
             agentIP=$(curl -s https://api.ipify.org/)
@@ -173,7 +173,7 @@ jobs:
             --account-name "${{ secrets.STORAGE_ACCOUNT_NAME }}" \
             --ip-address $agentIP
               sleep 60
-              
+
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       run: terraform init
