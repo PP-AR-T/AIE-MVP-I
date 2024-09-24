@@ -44,7 +44,7 @@ jobs:
             --resource-group "${{ secrets.RESOURCE_GROUP }}" \
             --account-name "${{ secrets.STORAGE_ACCOUNT_NAME }}" \
             --ip-address $agentIP
-              sleep 60
+              sleep 10
 
   terraform-plan:
     name: 'Terraform Plan'
@@ -217,7 +217,7 @@ jobs:
       uses: azure/CLI@v1
       with:
         inlineScript: |
-          sleep 120
+          sleep 10
           set -eu
           agentIP=$(curl -s https://api.ipify.org/)
           az storage account network-rule remove  \
