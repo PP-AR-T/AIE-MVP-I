@@ -4,6 +4,9 @@ terraform {
       source  = "hashicorp/azurerm"
       version = ">= 3.7.0"
     }
+    databricks = {
+      source = "databricks/databricks"
+    }
   }
 
   # Update this block with the location of your terraform state file
@@ -21,13 +24,7 @@ provider "azurerm" {
   use_oidc = true
 }
 
-terraform {
-  required_providers {
-    databricks = {
-      source = "databricks/databricks"
-    }
-  }
-}
+
 
 # Define any Azure resources to be created here. A simple resource group is shown here as a minimal example.
 resource "azurerm_resource_group" "rg-tf-db-ai-demo" {

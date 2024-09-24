@@ -18,7 +18,3 @@ resource "databricks_user" "user" {
   user_name    = var.databricks_user_name
   display_name = var.databricks_display_name
 }
-
-output "databricks_workspace_url" {
-  value = azurerm_databricks_workspace.workspace.workspace_url
-}
