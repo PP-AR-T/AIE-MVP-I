@@ -1,18 +1,19 @@
-resource "azurerm_databricks_workspace" "a_db_ws" {
-  location            = "uksouth"
-  name                = "db-workspace-demo"
-  resource_group_name = var.resource_group_name
-  sku                 = "trial"
-  managed_resource_group_name = "db-managed-rg-demo"
-  custom_parameters {
-    storage_account_name = "sa_databricks-ppdemo"
-    storage_account_sku_name = "Standard_LRS"
-  }
+# Define any Azure resources to be created here. A simple resource group is shown here as a minimal example.
+resource "azurerm_resource_group" "rg-tf-db-ai-demo" {
+  name     = var.resource_group_name
+  location = var.location
 }
-provider "databricks" {
-  host = azurerm_databricks_workspace.a_db_ws.workspace_url
-}
-resource "databricks_user" "my-user" {
-  user_name    = "pp-test-user@databricks.com"
-  display_name = "PP-Test User"
+
+module "databricks" {
+  source = "./modules/databricks"
+
+  resource_group_name         = var.resource_group_name
+  location                    = var.location
+  databricks_workspace_name   = var.databricks_workspace_name
+  databricks_sku              = var.databricks_sku
+  managed_resource_group_name = var.managed_resource_group_name
+  storage_account_name        = var.storage_account_name
+  storage_account_sku_name    = var.storage_account_sku_name
+  databricks_user_name        = var.databricks_user_name
+  databricks_display_name     = var.databricks_display_name
 }
