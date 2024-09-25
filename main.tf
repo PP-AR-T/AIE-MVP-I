@@ -1,11 +1,13 @@
 terraform {
   required_providers {
+    databricks = {
+      source = "databricks/databricks"
+    }
     azurerm = {
       source  = "hashicorp/azurerm"
       version = ">= 3.7.0"
     }
   }
-
   backend "azurerm" {
     resource_group_name  = "rg-terraform-github-actions"
     storage_account_name = "sappterraformga"
