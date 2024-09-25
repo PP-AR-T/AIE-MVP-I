@@ -62,11 +62,12 @@ resource "azurerm_network_security_group" "example" {
 }
 
 resource "azurerm_databricks_workspace" "workspace" {
-  location                      = var.location
-  name                          = var.databricks_workspace_name
-  resource_group_name           = var.resource_group_name
-  sku                           = var.databricks_sku
-  managed_resource_group_name   = var.managed_resource_group_name
+  location                    = var.location
+  name                        = var.databricks_workspace_name
+  resource_group_name         = var.resource_group_name
+  sku                         = var.databricks_sku
+  managed_resource_group_name = var.managed_resource_group_name
+  #checkov:skip=CKV_AZURE_158: I set up a private vnet for that???
   public_network_access_enabled = true
   #checkov:skip=CKV2_AZURE_48: No need for dbfs encryption at this point
   custom_parameters {
