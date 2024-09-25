@@ -23,6 +23,7 @@ env:
 jobs:
   terraform-plan:
       name: 'Terraform Plan with Whitelisting'
+      if: github.ref != 'refs/heads/main'
       runs-on: ubuntu-latest
       environment: production
       outputs:
