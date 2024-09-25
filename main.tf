@@ -28,6 +28,20 @@ resource "azurerm_resource_group" "rg-tf-db-ai-demo" {
   location = var.location
 }
 
+resource "null_resource" "wait_for_rg" {
+  depends_on = [azurerm_resource_group.rg-tf-db-ai-demo]
+
+  provisioner "local-exec" {
+    command = <<EOT
+      while ! az group show --name rg-tf-db-ai-demo --output none; do
+        echo "Waiting for resource group to be available..."
+        sleep 10
+      done
+      echo "Resource group is available."
+    EOT
+  }
+}
+
 module "databricks" {
   source = "./modules/databricks"
 
