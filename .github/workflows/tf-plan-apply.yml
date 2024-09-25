@@ -23,6 +23,7 @@ env:
 jobs:
   terraform-plan:
       name: 'Terraform Plan with Whitelisting'
+      if: github.ref != 'refs/heads/main'
       runs-on: ubuntu-latest
       environment: production
       outputs:
@@ -47,7 +48,7 @@ jobs:
               --resource-group "${{ secrets.RESOURCE_GROUP }}" \
               --account-name "${{ secrets.STORAGE_ACCOUNT_NAME }}" \
               --ip-address $agentIP
-                sleep 10
+                sleep 20
 
     # Checkout the repository to the GitHub Actions runner
       - name: Checkout
@@ -141,7 +142,8 @@ jobs:
               })
         
       - name: Remove GitHub Runner IP from Whitelist on Terraform Apply
-        uses: azure/CLI@v1
+        if: always()
+        uses: azure/CLI@v2
         with:
           inlineScript: |
             set -eu
@@ -176,7 +178,7 @@ jobs:
             --resource-group "${{ secrets.RESOURCE_GROUP }}" \
             --account-name "${{ secrets.STORAGE_ACCOUNT_NAME }}" \
             --ip-address $agentIP
-              sleep 10
+              sleep 20
 
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
@@ -201,7 +203,8 @@ jobs:
       run: terraform apply -auto-approve tfplan
 
     - name: Remove GitHub Runner IP from Whitelist on Terraform Apply
-      uses: azure/CLI@v1
+      if: always()
+      uses: azure/CLI@v2
       with:
         inlineScript: |
           set -eu
