@@ -131,9 +131,9 @@ resource "databricks_cluster" "demo-cluster" {
   }
 
   azure_attributes {
-    first_on_demand     = 1
-    availability        = "SPOT_WITH_FALLBACK_AZURE"
-    spot_bid_max_price  = -1
+    first_on_demand    = 1
+    availability       = "SPOT_WITH_FALLBACK_AZURE"
+    spot_bid_max_price = -1
   }
 
 }
