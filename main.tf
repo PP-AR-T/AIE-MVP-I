@@ -20,6 +20,10 @@ provider "azurerm" {
   use_oidc = true
 }
 
+provider "databricks" {
+  host = azurerm_databricks_workspace.workspace.workspace_url
+}
+
 data "azurerm_client_config" "current" {}
 
 # Define the resource group
@@ -74,8 +78,7 @@ module "databricks" {
   databricks_user_name        = var.databricks_user_name
   databricks_display_name     = var.databricks_display_name
   prefix                      = var.prefix
-
-  depends_on = [azurerm_role_definition.custom_role]
+  depends_on = [ null_resource.wait_for_rg ]
 }
 
 # Reference the output variables from the databricks module
