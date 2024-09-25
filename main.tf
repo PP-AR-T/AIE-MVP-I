@@ -68,28 +68,28 @@ resource "azurerm_role_definition" "custom_role" {
   depends_on = [null_resource.wait_for_rg]
 }
 
-# Define the Databricks module
-module "databricks" {
-  source = "./modules/databricks"
-
-  resource_group_name         = var.resource_group_name
-  location                    = var.location
-  databricks_workspace_name   = var.databricks_workspace_name
-  databricks_sku              = var.databricks_sku
-  managed_resource_group_name = var.managed_resource_group_name
-  storage_account_name        = var.storage_account_name
-  storage_account_sku_name    = var.storage_account_sku_name
-  databricks_user_name        = var.databricks_user_name
-  databricks_display_name     = var.databricks_display_name
-  prefix                      = var.prefix
-  depends_on                  = [null_resource.wait_for_rg]
-}
-
-# Reference the output variables from the databricks module
-output "public_subnet_id" {
-  value = module.databricks.public_subnet_id
-}
-
-output "private_subnet_id" {
-  value = module.databricks.private_subnet_id
-}
+## Define the Databricks module
+#module "databricks" {
+#  source = "./modules/databricks"
+#
+#  resource_group_name         = var.resource_group_name
+#  location                    = var.location
+#  databricks_workspace_name   = var.databricks_workspace_name
+#  databricks_sku              = var.databricks_sku
+#  managed_resource_group_name = var.managed_resource_group_name
+#  storage_account_name        = var.storage_account_name
+#  storage_account_sku_name    = var.storage_account_sku_name
+#  databricks_user_name        = var.databricks_user_name
+#  databricks_display_name     = var.databricks_display_name
+#  prefix                      = var.prefix
+#  depends_on                  = [null_resource.wait_for_rg]
+#}
+#
+## Reference the output variables from the databricks module
+#output "public_subnet_id" {
+#  value = module.databricks.public_subnet_id
+#}
+#
+#output "private_subnet_id" {
+#  value = module.databricks.private_subnet_id
+#}
