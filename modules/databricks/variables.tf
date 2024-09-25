@@ -1,12 +1,11 @@
 variable "resource_group_name" {
-  description = "The name of the resource group in which resources will be created"
+  description = "The name of the resource group"
   type        = string
 }
 
 variable "location" {
-  description = "The Azure region where the resources will be deployed"
+  description = "The Azure region where resources will be deployed"
   type        = string
-  default     = "UK South"
 }
 
 variable "databricks_workspace_name" {

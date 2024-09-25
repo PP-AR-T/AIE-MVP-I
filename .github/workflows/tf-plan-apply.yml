@@ -44,7 +44,7 @@ jobs:
             --resource-group "${{ secrets.RESOURCE_GROUP }}" \
             --account-name "${{ secrets.STORAGE_ACCOUNT_NAME }}" \
             --ip-address $agentIP
-              sleep 60
+              sleep 10
 
   terraform-plan:
     name: 'Terraform Plan'
@@ -74,8 +74,15 @@ jobs:
     # Checks that all Terraform configuration files adhere to a canonical format
     # Will fail the build if not
     - name: Terraform Format
-      run: terraform fmt -check
-
+      run: |
+          output=$(terraform fmt -check -recursive 2>&1)
+          echo "$output"
+          exit_code=$?
+          echo "Terraform fmt exited with code $exit_code"
+          if [ $exit_code -ne 0 ]; then
+            exit $exit_code
+          fi
+          
     # Generates an execution plan for Terraform
     # An exit code of 0 indicated no changes, 1 a terraform failure, 2 there are pending changes.
     - name: Terraform Plan
@@ -217,7 +224,7 @@ jobs:
       uses: azure/CLI@v1
       with:
         inlineScript: |
-          sleep 120
+          sleep 10
           set -eu
           agentIP=$(curl -s https://api.ipify.org/)
           az storage account network-rule remove  \
