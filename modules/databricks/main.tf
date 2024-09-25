@@ -46,19 +46,19 @@ resource "azurerm_subnet" "private" {
 }
 # Associate a Network Security Group (NSG) with the private subnet
 resource "azurerm_subnet_network_security_group_association" "private" {
-  subnet_id                 = azurerm_subnet.private.id            # ID of the private subnet
+  subnet_id                 = azurerm_subnet.private.id # ID of the private subnet
   network_security_group_id = azurerm_network_security_group.example.id
 }
 
 resource "azurerm_subnet_network_security_group_association" "public" {
-  subnet_id                 = azurerm_subnet.public.id                 # ID of the public subnet
+  subnet_id                 = azurerm_subnet.public.id # ID of the public subnet
   network_security_group_id = azurerm_network_security_group.example.id
 }
 # Define a Network Security Group (NSG)
 resource "azurerm_network_security_group" "example" {
-  name                = "${var.prefix}-databricks-nsg"          # Name of the NSG
-  location            = var.location   # Location of the NSG
-  resource_group_name = var.resource_group_name    # Resource group for the NSG
+  name                = "${var.prefix}-databricks-nsg" # Name of the NSG
+  location            = var.location                   # Location of the NSG
+  resource_group_name = var.resource_group_name        # Resource group for the NSG
 }
 
 resource "azurerm_databricks_workspace" "workspace" {
@@ -67,7 +67,7 @@ resource "azurerm_databricks_workspace" "workspace" {
   resource_group_name           = var.resource_group_name
   sku                           = var.databricks_sku
   managed_resource_group_name   = var.managed_resource_group_name
-  public_network_access_enabled = true 
+  public_network_access_enabled = true
   #checkov:skip=CKV2_AZURE_48: No need for dbfs encryption at this point
   custom_parameters {
     storage_account_name     = var.storage_account_name
