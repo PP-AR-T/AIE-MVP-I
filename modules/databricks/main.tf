@@ -1,3 +1,25 @@
+terraform {
+  required_providers {
+    databricks = {
+      source  = "databricks/databricks"
+      version = "1.37.1"
+    }
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">= 3.7.0"
+    }
+  }
+}
+
+provider "azurerm" {
+  features {}
+  use_oidc = true
+}
+
+provider "databricks" {
+  host = azurerm_databricks_workspace.workspace.workspace_url
+}
+
 resource "azurerm_virtual_network" "example" {
   name                = "${var.prefix}-databricks-vnet"
   address_space       = ["10.0.0.0/16"]
