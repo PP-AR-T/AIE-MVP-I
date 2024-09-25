@@ -55,7 +55,4 @@ module "databricks" {
   databricks_user_name        = var.databricks_user_name
   databricks_display_name     = var.databricks_display_name
 
-    depends_on = [
-    azurerm_resource_group.rg-tf-db-ai-demo
-  ]
 }
