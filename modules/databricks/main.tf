@@ -88,10 +88,6 @@ resource "azurerm_databricks_workspace" "workspace" {
   }
 }
 
-provider "databricks" {
-  host = azurerm_databricks_workspace.workspace.workspace_url
-}
-
 resource "databricks_user" "user" {
   user_name    = var.databricks_user_name
   display_name = var.databricks_display_name
