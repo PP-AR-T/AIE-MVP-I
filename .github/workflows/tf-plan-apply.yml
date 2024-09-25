@@ -238,7 +238,7 @@ jobs:
     if: needs.terraform-plan.outputs.tfplanExitCode == 1
     runs-on: ubuntu-latest
     environment: production
-    needs: [whitelisting-ip]
+    needs: [terraform-plan]
     steps:
 
     - name: Azure CLI Login
