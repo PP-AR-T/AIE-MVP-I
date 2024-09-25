@@ -43,8 +43,8 @@ resource "azurerm_subnet_network_security_group_association" "public" {
 # Define a Network Security Group (NSG)
 resource "azurerm_network_security_group" "example" {
   name                = "${var.prefix}-databricks-nsg"          # Name of the NSG
-  location            = azurerm_resource_group.example.location # Location of the NSG
-  resource_group_name = azurerm_resource_group.example.name     # Resource group for the NSG
+  location            = var.location   # Location of the NSG
+  resource_group_name = var.resource_group_name    # Resource group for the NSG
 }
 
 
