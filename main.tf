@@ -30,9 +30,9 @@ resource "azurerm_resource_group" "rg-tf-db-ai-demo" {
 }
 
 resource "azurerm_role_assignment" "rg_reader" {
-  principal_id   = data.azurerm_client_config.current.object_id
+  principal_id         = data.azurerm_client_config.current.object_id
   role_definition_name = "Reader"
-  scope          = azurerm_resource_group.rg-tf-db-ai-demo.id
+  scope                = azurerm_resource_group.rg-tf-db-ai-demo.id
 }
 
 resource "null_resource" "wait_for_rg" {
