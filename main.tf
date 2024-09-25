@@ -6,7 +6,6 @@ terraform {
     }
   }
 
-  # Update this block with the location of your terraform state file
   backend "azurerm" {
     resource_group_name  = "rg-terraform-github-actions"
     storage_account_name = "sappterraformga"
@@ -23,12 +22,28 @@ provider "azurerm" {
 
 data "azurerm_client_config" "current" {}
 
-# Define any Azure resources to be created here. A simple resource group is shown here as a minimal example.
+# Define the resource group
 resource "azurerm_resource_group" "rg-tf-db-ai-demo" {
   name     = var.resource_group_name
   location = var.location
 }
 
+# Wait for the resource group to be available
+resource "null_resource" "wait_for_rg" {
+  provisioner "local-exec" {
+    command = <<EOT
+      while ! az group show --name ${azurerm_resource_group.rg-tf-db-ai-demo.name} --output none; do
+        echo "Waiting for resource group to be available..."
+        sleep 10
+      done
+      echo "Resource group is available."
+    EOT
+  }
+
+  depends_on = [azurerm_resource_group.rg-tf-db-ai-demo]
+}
+
+# Define the custom role definition
 resource "azurerm_role_definition" "custom_role" {
   name        = "Custom Role for Role Assignment"
   scope       = azurerm_resource_group.rg-tf-db-ai-demo.id
@@ -41,23 +56,11 @@ resource "azurerm_role_definition" "custom_role" {
     not_actions = []
   }
   assignable_scopes = [azurerm_resource_group.rg-tf-db-ai-demo.id]
+
+  depends_on = [null_resource.wait_for_rg]
 }
 
-resource "null_resource" "wait_for_rg" {
-
-  provisioner "local-exec" {
-    command = <<EOT
-      while ! az group show --name rg-tf-db-ai-demo --output none; do
-        echo "Waiting for resource group to be available..."
-        sleep 10
-      done
-      echo "Resource group is available."
-    EOT
-  }
-}
-
-# main.tf
-
+# Define the Databricks module
 module "databricks" {
   source = "./modules/databricks"
 
@@ -71,6 +74,8 @@ module "databricks" {
   databricks_user_name        = var.databricks_user_name
   databricks_display_name     = var.databricks_display_name
   prefix                      = var.prefix
+
+  depends_on = [azurerm_role_definition.custom_role]
 }
 
 # Reference the output variables from the databricks module
