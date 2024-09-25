@@ -29,7 +29,6 @@ resource "azurerm_resource_group" "rg-tf-db-ai-demo" {
 }
 
 resource "null_resource" "wait_for_rg" {
-  depends_on = [azurerm_resource_group.rg-tf-db-ai-demo]
 
   provisioner "local-exec" {
     command = <<EOT
