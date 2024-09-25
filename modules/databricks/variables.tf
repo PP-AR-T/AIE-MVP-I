@@ -42,3 +42,7 @@ variable "databricks_display_name" {
   description = "The display name of the Databricks user"
   type        = string
 }
+
+variable "prefix" {
+  description = "The Prefix used for all resources in this example"
+}
