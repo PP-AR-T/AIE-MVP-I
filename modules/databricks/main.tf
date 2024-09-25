@@ -116,3 +116,24 @@ resource "databricks_user" "user" {
 }
 
 
+resource "databricks_cluster" "demo-cluster" {
+  cluster_name            = "demo-cluster"
+  spark_version           = "15.4.x-cpu-ml-scala2.12"
+  node_type_id            = "Standard_DS3_v2"
+  autotermination_minutes = 30
+  policy_id               = "0007302AE31343DE"
+  data_security_mode      = "NONE"
+  runtime_engine          = "PHOTON"
+
+  autoscale {
+    min_workers = 1
+    max_workers = 2
+  }
+
+  azure_attributes {
+    first_on_demand     = 1
+    availability        = "SPOT_WITH_FALLBACK_AZURE"
+    spot_bid_max_price  = -1
+  }
+
+}
