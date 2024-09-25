@@ -46,12 +46,12 @@ resource "azurerm_subnet" "private" {
 }
 # Associate a Network Security Group (NSG) with the private subnet
 resource "azurerm_subnet_network_security_group_association" "private" {
-  subnet_id                 = var.private_subnet_id                 # ID of the private subnet
+  subnet_id                 = azurerm_subnet.private.id            # ID of the private subnet
   network_security_group_id = azurerm_network_security_group.example.id
 }
 
 resource "azurerm_subnet_network_security_group_association" "public" {
-  subnet_id                 = var.public_subnet_id                  # ID of the public subnet
+  subnet_id                 = azurerm_subnet.public.id                 # ID of the public subnet
   network_security_group_id = azurerm_network_security_group.example.id
 }
 # Define a Network Security Group (NSG)
