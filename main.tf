@@ -21,11 +21,18 @@ provider "azurerm" {
   use_oidc = true
 }
 
+data "azurerm_client_config" "current" {}
 
 # Define any Azure resources to be created here. A simple resource group is shown here as a minimal example.
 resource "azurerm_resource_group" "rg-tf-db-ai-demo" {
   name     = var.resource_group_name
   location = var.location
+}
+
+resource "azurerm_role_assignment" "rg_reader" {
+  principal_id   = data.azurerm_client_config.current.object_id
+  role_definition_name = "Reader"
+  scope          = azurerm_resource_group.rg-tf-db-ai-demo.id
 }
 
 resource "null_resource" "wait_for_rg" {
