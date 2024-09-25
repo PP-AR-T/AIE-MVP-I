@@ -1,6 +1,5 @@
-# Sample values
-resource_group_name = "rg-tf-db-ai-demo"
-location            = "uksouth"
+resource_group_name         = "rg-tf-db-ai-demo"
+location                    = "uksouth"
 databricks_workspace_name   = "db-workspace-demo"
 databricks_sku              = "trial"
 managed_resource_group_name = "db-managed-rg-demo"
