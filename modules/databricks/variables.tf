@@ -46,6 +46,7 @@ variable "databricks_display_name" {
 variable "prefix" {
   description = "The Prefix used for all resources in this example"
 }
+# modules/databricks/variables.tf
 
 variable "public_subnet_id" {
   description = "The ID of the public subnet"

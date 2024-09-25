@@ -56,6 +56,8 @@ resource "null_resource" "wait_for_rg" {
   }
 }
 
+# main.tf
+
 module "databricks" {
   source = "./modules/databricks"
 
@@ -69,7 +71,13 @@ module "databricks" {
   databricks_user_name        = var.databricks_user_name
   databricks_display_name     = var.databricks_display_name
   prefix                      = var.prefix
-  public_subnet_id            = azurerm_subnet.public.id
-  private_subnet_id           = azurerm_subnet.private.id
+}
 
+# Reference the output variables from the databricks module
+output "public_subnet_id" {
+  value = module.databricks.public_subnet_id
+}
+
+output "private_subnet_id" {
+  value = module.databricks.private_subnet_id
 }
