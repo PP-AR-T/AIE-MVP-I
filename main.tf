@@ -43,22 +43,6 @@ resource "azurerm_role_definition" "custom_role" {
   assignable_scopes = [azurerm_resource_group.rg-tf-db-ai-demo.id]
 }
 
-
-
-module "vnet" {
-  source              = "./modules/vnet"
-  vnet_name           = "db-demo-vnet"
-  address_space       = ["10.0.0.0/16"]
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  subnets = [
-    {
-      name           = "db-demo-subnet"
-      address_prefix = "10.0.1.0/24"
-    }
-  ]
-}
-
 resource "null_resource" "wait_for_rg" {
 
   provisioner "local-exec" {
