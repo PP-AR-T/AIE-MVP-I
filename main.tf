@@ -1,8 +1,10 @@
 terraform {
   required_providers {
     databricks = {
-      source = "databricks/databricks"
+      source  = "databricks/databricks"
+      version = "1.37.1"
     }
+
     azurerm = {
       source  = "hashicorp/azurerm"
       version = ">= 3.7.0"
@@ -80,7 +82,7 @@ module "databricks" {
   databricks_user_name        = var.databricks_user_name
   databricks_display_name     = var.databricks_display_name
   prefix                      = var.prefix
-  depends_on = [ null_resource.wait_for_rg ]
+  depends_on                  = [null_resource.wait_for_rg]
 }
 
 # Reference the output variables from the databricks module
