@@ -59,7 +59,6 @@ module "databricks" {
   databricks_user_name        = var.databricks_user_name
   databricks_display_name     = var.databricks_display_name
   prefix                      = var.prefix
-  depends_on                  = [null_resource.wait_for_rg]
 }
 
 # Reference the output variables from the databricks module
