@@ -69,5 +69,7 @@ module "databricks" {
   databricks_user_name        = var.databricks_user_name
   databricks_display_name     = var.databricks_display_name
   prefix                      = var.prefix
+  public_subnet_id            = azurerm_subnet.public.id
+  private_subnet_id           = azurerm_subnet.private.id
 
 }

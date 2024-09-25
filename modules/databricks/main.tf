@@ -1,21 +1,18 @@
-# Define a Virtual Network (VNet)
 resource "azurerm_virtual_network" "example" {
-  name                = "${var.prefix}-databricks-vnet" # Name of the VNet
-  address_space       = ["10.0.0.0/16"]                 # Address space for the VNet
-  location            = var.location                    # Location of the VNet
-  resource_group_name = var.resource_group_name         # Resource group for the VNet
+  name                = "${var.prefix}-databricks-vnet"
+  address_space       = ["10.0.0.0/16"]
+  location            = var.location
+  resource_group_name = var.resource_group_name
 }
 
-# Define a Public Subnet within the VNet
 resource "azurerm_subnet" "public" {
-  name                 = "${var.prefix}-public-subnet"        # Name of the subnet
-  resource_group_name  = var.resource_group_name              # Resource group for the subnet
-  virtual_network_name = azurerm_virtual_network.example.name # VNet to which the subnet belongs
-  address_prefixes     = ["10.0.1.0/24"]                      # Address prefix for the subnet
+  name                 = "${var.prefix}-public-subnet"
+  resource_group_name  = var.resource_group_name
+  virtual_network_name = azurerm_virtual_network.example.name
+  address_prefixes     = ["10.0.1.0/24"]
 
-  # Delegate the subnet to Databricks
   delegation {
-    name = "${var.prefix}-databricks-del" # Name of the delegation
+    name = "${var.prefix}-databricks-del"
 
     service_delegation {
       actions = [
@@ -23,31 +20,46 @@ resource "azurerm_subnet" "public" {
         "Microsoft.Network/virtualNetworks/subnets/prepareNetworkPolicies/action",
         "Microsoft.Network/virtualNetworks/subnets/unprepareNetworkPolicies/action",
       ]
-      name = "Microsoft.Databricks/workspaces" # Service to which the subnet is delegated
+      name = "Microsoft.Databricks/workspaces"
     }
   }
 }
 
+resource "azurerm_subnet" "private" {
+  name                 = "${var.prefix}-private-subnet"
+  resource_group_name  = var.resource_group_name
+  virtual_network_name = azurerm_virtual_network.example.name
+  address_prefixes     = ["10.0.2.0/24"]
+
+  delegation {
+    name = "${var.prefix}-databricks-del"
+
+    service_delegation {
+      actions = [
+        "Microsoft.Network/virtualNetworks/subnets/join/action",
+        "Microsoft.Network/virtualNetworks/subnets/prepareNetworkPolicies/action",
+        "Microsoft.Network/virtualNetworks/subnets/unprepareNetworkPolicies/action",
+      ]
+      name = "Microsoft.Databricks/workspaces"
+    }
+  }
+}
 # Associate a Network Security Group (NSG) with the private subnet
 resource "azurerm_subnet_network_security_group_association" "private" {
-  subnet_id                 = azurerm_subnet.private.id                 # ID of the private subnet
-  network_security_group_id = azurerm_network_security_group.example.id # ID of the NSG
+  subnet_id                 = var.private_subnet_id                 # ID of the private subnet
+  network_security_group_id = azurerm_network_security_group.example.id
 }
 
-# Associate a Network Security Group (NSG) with the public subnet
 resource "azurerm_subnet_network_security_group_association" "public" {
-  subnet_id                 = azurerm_subnet.public.id                  # ID of the public subnet
-  network_security_group_id = azurerm_network_security_group.example.id # ID of the NSG
+  subnet_id                 = var.public_subnet_id                  # ID of the public subnet
+  network_security_group_id = azurerm_network_security_group.example.id
 }
-
 # Define a Network Security Group (NSG)
 resource "azurerm_network_security_group" "example" {
   name                = "${var.prefix}-databricks-nsg"          # Name of the NSG
   location            = var.location   # Location of the NSG
   resource_group_name = var.resource_group_name    # Resource group for the NSG
 }
-
-
 
 resource "azurerm_databricks_workspace" "workspace" {
   location                      = var.location
